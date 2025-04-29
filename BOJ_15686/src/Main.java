@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
@@ -12,27 +13,37 @@ class Node{
     }
 }
 public class Main {
-    static int n, m, count = 0;
+    static int n, m, answer = Integer.MAX_VALUE;
     static int[][] arr;
-    static boolean[][] visited;
-    static int[] dx = {-1, 0, 1, 0}, dy = {0, 1, 0, -1};
+    static Node[] points;
+    static ArrayList<Node> chicken = new ArrayList<>();
+    static boolean[] visited;
 
-
-    public void DFS(int d, int x, int y){
-        if(d == count - m){
+    public void DFS(int d, int s){
+        if(d == m){
+            int sum = 0;
             for(int i=0;i<n;i++){
                 for(int j=0;j<n;j++){
-
+                    if(arr[i][j] == 1){
+                        int dis = Integer.MAX_VALUE;
+                        for(int k=0;k<points.length;k++){
+                            Node cur = points[k];
+                            int curDis = Math.abs(j-cur.x) + Math.abs(i-cur.y);
+                            dis = Math.min(dis, curDis);
+                        }
+                        sum += dis;
+                    }
                 }
             }
+            answer = Math.min(answer, sum);
         } else{
-            for(int i=0;i<4;i++){
-                int nx = x + dx[i], ny = y + dy[i];
-                    if(arr[ny][nx] == 2){
-                        arr[ny][nx] = 0;
-                        DFS(d+1, nx, ny);
-                        arr[ny][nx] = 2;
-                    }
+            for(int i=s;i<chicken.size();i++){
+                if(!visited[i]){
+                    visited[i] = true;
+                    points[d] = chicken.get(i);
+                    DFS(d+1, i+1);
+                    visited[i] = false;
+                }
             }
         }
     }
@@ -46,15 +57,21 @@ public class Main {
         n = Integer.parseInt(st.nextToken());
         m = Integer.parseInt(st.nextToken());
         arr = new int[n][n];
-        visited = new boolean[n][n];
+        points = new Node[m];
+
         for(int i=0;i<n;i++){
             st = new StringTokenizer(br.readLine());
             for(int j=0;j<n;j++){
                 arr[i][j] = Integer.parseInt(st.nextToken());
                 if(arr[i][j] == 2){
-                    count++;
+                    chicken.add(new Node(j, i));
                 }
             }
         }
+        visited = new boolean[chicken.size()];
+        T.DFS(0, 0);
+        bw.write(String.valueOf(answer));
+        bw.flush();
+        bw.close();
     }
 }
