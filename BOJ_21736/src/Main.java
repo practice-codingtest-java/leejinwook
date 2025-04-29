@@ -4,12 +4,11 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 class Locate{
-    int x, y, count;
+    int x, y;
 
-    public Locate(int x, int y, int count) {
+    public Locate(int x, int y) {
         this.x = x;
         this.y = y;
-        this.count = count;
     }
 }
 public class Main {
@@ -26,13 +25,12 @@ public class Main {
             int len = queue.size();
             for(int i=0;i<len;i++){
                 Locate cur = queue.poll();
-                answer = Math.max(answer, cur.count);
                 for(int j=0;j<4;j++){
                     int nx = cur.x + dx[j], ny = cur.y + dy[j];
                     if(nx >= 0 && nx < m && ny >= 0 && ny < n && !visited[ny][nx] && arr[ny][nx] != 'X'){
                         visited[ny][nx] = true;
-                        if(arr[ny][nx] == 'O') queue.offer(new Locate(nx, ny, cur.count));
-                        else if(arr[ny][nx] == 'P') queue.offer(new Locate(nx, ny, cur.count + 1));
+                        if(arr[ny][nx] == 'P') answer++;
+                        queue.offer(new Locate(nx, ny));
                     }
                 }
             }
@@ -55,7 +53,7 @@ public class Main {
             for(int j=0;j<m;j++){
                 arr[i][j] = line.charAt(j);
                 if(arr[i][j] == 'I'){
-                    doyeon = new Locate(j, i, 0);
+                    doyeon = new Locate(j, i);
                 }
             }
         }
